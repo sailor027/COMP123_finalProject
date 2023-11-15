@@ -21,18 +21,43 @@ class CanvasGUI:
         # Show all of the canvas
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
+        body = self.canvas.create_rectangle(250, 250, 270, 270, fill="light green")
+
+        # Bind the main window to respond to mouse button and keyboard entry
+        self.rootWin.bind("<Up>", self.snakeUp)
+        self.rootWin.bind("<Down>", self.snakeDown)
+        self.rootWin.bind("<Right>", self.snakeRight)
+        self.rootWin.bind("<Left>", self.snakeLeft)
+
+
 
 
     # ---------------------------------------------------------------------
     # Set up snake
+
     def moveSnake(self):
+        pass
+
+    def snakeUp(self):
+        pass
+
+    def snakeDown(self):
+        pass
+
+    def snakeRight(self):
+        pass
+
+    def snakeLeft(self):
         pass
 
 
     def run(self):
-        while True:
-            # self.moveSnake()
-            self.rootWin.mainloop()
+        try:
+            while True:
+                self.moveSnake()
+                self.rootWin.mainloop()
+        except tk.TclError:
+            pass
 
 # =====================================================================
 snakeGUI = CanvasGUI()
