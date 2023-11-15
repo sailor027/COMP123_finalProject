@@ -16,7 +16,8 @@ class CanvasGUI:
         self.rootWin = tk.Tk()
         self.rootWin.title("Snake Game")
 
-        mainCanvas = tk.Canvas(self.rootWin)
+        self.canvas = tk.Canvas(self.rootWin, bg = 'black', width = 500, height = 500, bd = 0)
+
 
 
     # ---------------------------------------------------------------------
@@ -26,7 +27,10 @@ class CanvasGUI:
 
 
     def run(self):
-        pass
+        try:
+            self.moveSnake()
+        except tk.TclError:
+            pass
 
 # =====================================================================
 snakeGUI = CanvasGUI
