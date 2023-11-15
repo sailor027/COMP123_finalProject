@@ -17,6 +17,9 @@ class CanvasGUI:
         self.rootWin.title("Snake Game")
 
         self.canvas = tk.Canvas(self.rootWin, bg = 'black', width = 500, height = 500, bd = 0)
+        self.canvas.grid(row=1, column=1)
+        # Show all of the canvas
+        self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
 
 
@@ -27,11 +30,10 @@ class CanvasGUI:
 
 
     def run(self):
-        try:
-            self.moveSnake()
-        except tk.TclError:
-            pass
+        while True:
+            # self.moveSnake()
+            self.rootWin.update()
 
 # =====================================================================
-snakeGUI = CanvasGUI
+snakeGUI = CanvasGUI()
 snakeGUI.run()
