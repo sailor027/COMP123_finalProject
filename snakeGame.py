@@ -32,7 +32,7 @@ class CanvasGUI:
     def run(self):
         while True:
             # self.moveSnake()
-            self.rootWin.update()
+            self.rootWin.mainloop()
 
 # =====================================================================
 snakeGUI = CanvasGUI()
