@@ -16,8 +16,11 @@ class CanvasGUI:
         self.rootWin = tk.Tk()
         self.rootWin.title("Snake Game")
 
+        self.lblTitle = tk.Label(self.rootWin, text="Snake Game", font=('Menlo bold', 20), justify=tk.CENTER)
+        self.lblTitle.grid(row=0, column=0, padx=10, pady=10)
+
         self.canvas = tk.Canvas(self.rootWin, bg = 'black', width = 500, height = 500, bd = 0)
-        self.canvas.grid(row=1, column=1)
+        self.canvas.grid(row=1, column=0)
         # Show all of the canvas
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
