@@ -82,11 +82,11 @@ class SnakeGUI:
         self.snake.insert(0, (x, y))
 
 
-        # TODO: If snake eats food, delete food, make longer
         if self.snake[0] == self.food:
             self.canvas.delete("food")
             self.food = self.createFood()
-            self.snake.insert(-1, (x, y+20*(len(self.snake)-1)))
+            xi, yi = self.snake[-1]
+            self.snake.append((xi, yi+20))
             self.drawSnake()
 
         self.snake.pop()
