@@ -3,13 +3,25 @@
 COMP 123-1 Final Project
 <Minseo Kim, Ko Horiuchi>
 """
-# ----------
-import tkinter as tk
-import random
+
+# ---------------------------------------------------------------------
+'''
+Resources Used
+- From class
+    - hw5
+    - GuiExamples/tkinterCanvas2
+    - GuiExamples/tkinterCanvas3
+- https://docs.python.org/3/tutorial/datastructures.html#
+- https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/key-names.html
+'''
 
 # ---------------------------------------------------------------------
 # TODO: @Ko get snake to move
 # TODO: @Minseo create widgets: quit, restart, score, (highest score)
+
+# ----------
+import tkinter as tk
+import random
 
 # =====================================================================
 class SnakeGUI:
