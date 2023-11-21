@@ -1,7 +1,7 @@
 # =====================================================================
 """
 COMP 123-1 Final Project
-Minseo Kim, Ko Horiuchi
+<Minseo Kim, Ko Horiuchi>
 """
 # ----------
 import tkinter as tk
@@ -33,75 +33,86 @@ class SnakeGUI:
         # Show all of the canvas
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
-
         self.rootWin.bind("<Key>", self.changeDirection)
 
-        # Initial list of snake body
-        self.snake = [(250, 250), (250, 270), (250, 290)]
-        # Initial snake direction
-        self.direction = "Up"
+        self.snake = [(240, 240), (240, 250), (240, 260)] # Initial list of snake body
+        self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
+        self.count = 0  # Count of food eaten
+        self.best = 0  # Best score
+        self.speed = 400  # Initial speed
+        # TODO: Use self.count to keep track of score
 
-        self.run()
 
     # ---------------------------------------------------------------------
     # Set up snake
 
-
     def run(self):
-        # FIXME: How do I get the snake to slow down?
-        self.moveSnake()
-        self.drawSnake()
-        self.rootWin.after(500, self.run)
+        x, y = self.snake[0]
+        if self.count > self.best:
+            self.best = self.count
+        if ((x >= 0 and x <= 480 and y >= 0 and y <= 480) and
+                (self.snake[0] not in self.snake[1:])):
+            self.moveSnake()
+            self.drawSnake()
+            self.rootWin.after(self.speed, self.run)
+        else:
+            self.canvas.create_text(250, 250, text="Game Over", fill='white', justify=tk.CENTER)  # Game Over
+            print(self.count)  # TODO: Delete later
 
 
     def drawSnake(self):
         self.canvas.delete("snakes")
         for x, y in self.snake:
-            self.canvas.create_rectangle(x, y, x+10, y+10, fill="light green", tags="snakes")
+            self.canvas.create_rectangle(x, y, x+20, y+20, fill="light green", tags="snakes")
 
 
     def changeDirection(self, event):
         # TODO: @Ko if conditions so that the snake can't move in the opposite direction
         arrow = event.keysym
-        self.direction = arrow
+        if ((arrow == "Up" and not self.direction == "Down") or
+                (arrow == "Down" and not self.direction == "Up") or
+                (arrow == "Right" and not self.direction == "Left") or
+                (arrow == "Left" and not self.direction == "Right")):
+            self.direction = arrow
 
 
-    # FIXME: Testing snake move
     def moveSnake(self):
         x, y = self.snake[0]  # Get coordination of 1st snake
         if self.direction == "Up":
-            y += -10
+            y += -20
         elif self.direction == "Down":
-            y += 10
+            y += 20
         elif self.direction == "Right":
-            x += 10
+            x += 20
         elif self.direction == "Left":
-            x += -10
-
+            x += -20
         self.snake.insert(0, (x, y))
-
 
         if self.snake[0] == self.food:
             self.canvas.delete("food")
             self.food = self.createFood()
-            xi, yi = self.snake[-1]
-            self.snake.append((xi, yi+20))
+            self.count += 1
+            self.speed -= 5
+            if self.count > 0 and self.count%2 == 0:
+                xi, yi = self.snake[-1]
+                self.snake.append((xi, yi+20))
             self.drawSnake()
 
         self.snake.pop()
 
+
     def createFood(self):
-        x = random.randint(1, 49) * 10
-        y = random.randint(1, 49) * 10
-        self.canvas.create_oval(x, y, x+10, y+10, fill='red', tags="food")
+        x = random.randint(1, 24) * 20
+        y = random.randint(1, 24) * 20
+        self.canvas.create_oval(x, y, x+20, y+20, fill='red', tags="food")
         return x, y
 
     def go(self):
         try:
             while True:
-                # self.run() # FIXME: Why does the snake slow down when this is removed?
-                self.rootWin.update() # process events
+                self.run()
+                self.rootWin.mainloop()
         except tk.TclError:
             pass # to avoid errors when the window is closed
 
