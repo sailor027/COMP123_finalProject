@@ -17,7 +17,7 @@ Resources Used
 
 # ---------------------------------------------------------------------
 # TODO: @Ko get snake to move
-# TODO: @Minseo create widgets: quit, restart, score, (highest score)
+# TODO: @Minseo create widgets: quit, replay, score, (highest score)
 
 # ----------
 import tkinter as tk
@@ -45,9 +45,10 @@ class SnakeGUI:
         # Show all of the canvas
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
-        self.rootWin.bind("<Key>", self.changeDirection)
+        self.rootWin.bind("<Key>", self.keys)
 
-        self.snake = [(240, 240), (240, 250), (240, 260)] # Initial list of snake body
+        self.pause = False
+        self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
         self.count = 0  # Count of food eaten
@@ -63,14 +64,19 @@ class SnakeGUI:
         x, y = self.snake[0]
         if self.count > self.best:
             self.best = self.count
-        if ((x >= 0 and x <= 480 and y >= 0 and y <= 480) and
-                (self.snake[0] not in self.snake[1:])):
-            self.moveSnake()
-            self.drawSnake()
-            self.rootWin.after(self.speed, self.run)
-        else:
-            self.canvas.create_text(250, 250, text="Game Over", fill='white', justify=tk.CENTER)  # Game Over
-            print(self.count)  # TODO: Delete later
+        if not self.pause:
+            if ((x >= 0 and x <= 480 and y >= 0 and y <= 480) and
+                    (self.snake[0] not in self.snake[1:])):
+                self.moveSnake()
+                self.drawSnake()
+                self.rootWin.after(self.speed, self.run)
+            else:
+                self.canvas.create_text(250, 230, text="Game Over", fill='white', justify=tk.CENTER)  # Game Over
+                self.canvas.create_text(250,270, text="[c]ontinue / [r]estart / [q]uit")
+                print(self.count)  # TODO: Delete later
+        elif self.pause:
+            self.canvas.create_text(250, 250, text="Game Paused", fill='white', justify=tk.CENTER)
+
 
 
     def drawSnake(self):
@@ -79,14 +85,20 @@ class SnakeGUI:
             self.canvas.create_rectangle(x, y, x+20, y+20, fill="light green", tags="snakes")
 
 
-    def changeDirection(self, event):
-        # TODO: @Ko if conditions so that the snake can't move in the opposite direction
-        arrow = event.keysym
-        if ((arrow == "Up" and not self.direction == "Down") or
-                (arrow == "Down" and not self.direction == "Up") or
-                (arrow == "Right" and not self.direction == "Left") or
-                (arrow == "Left" and not self.direction == "Right")):
-            self.direction = arrow
+    def keys(self, event):
+        """Assigns keys to commands.
+        For arrow keys, prevent snake from going to the opposite direction.
+        Ecs => quit game"""
+        key = event.keysym
+        if ((key == "Up" and not self.direction == "Down") or
+                (key == "Down" and not self.direction == "Up") or
+                (key == "Right" and not self.direction == "Left") or
+                (key == "Left" and not self.direction == "Right")):
+            self.direction = key
+        elif key == "Escape":
+            self.quit()
+        elif key == "space":
+            self.restart()
 
 
     def moveSnake(self):
@@ -102,13 +114,13 @@ class SnakeGUI:
         self.snake.insert(0, (x, y))
 
         if self.snake[0] == self.food:
+            """If snake eats food, increase speed by 5ms and make body longer by 1 square"""
             self.canvas.delete("food")
             self.food = self.createFood()
             self.count += 1
             self.speed -= 5
-            if self.count > 0 and self.count%2 == 0:
-                xi, yi = self.snake[-1]
-                self.snake.append((xi, yi+20))
+            xi, yi = self.snake[-1]
+            self.snake.append((xi, yi+20))
             self.drawSnake()
 
         self.snake.pop()
@@ -120,13 +132,26 @@ class SnakeGUI:
         self.canvas.create_oval(x, y, x+20, y+20, fill='red', tags="food")
         return x, y
 
+    # ---------------------------------------------------------------------
     def go(self):
         try:
             while True:
                 self.run()
                 self.rootWin.mainloop()
         except tk.TclError:
-            pass # to avoid errors when the window is closed
+            pass  # to avoid errors when the window is closed
+
+    def restart(self):
+        self.pause = False
+        self.canvas.delete(tk.ALL)
+        self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
+        self.direction = "Up"  # Initial snake direction
+        self.food = self.createFood()
+        self.count = 0  # Count of food eaten
+        self.speed = 400  # Initial speed
+
+    def quit(self):
+        self.rootWin.destroy()
 
 
 
