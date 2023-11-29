@@ -38,6 +38,20 @@ class SnakeGUI:
         self.lblTitle = tk.Label(self.rootWin, text="Snake Game", font=('Menlo bold', 20), justify=tk.CENTER)
         self.lblTitle.grid(row=0, column=0, padx=10, pady=10)
 
+        self.quitButton=tk.Button(self.rootWin, text="Quit", font="Menlo 20", command= self.quit)
+        self.quitButton.grid(row=2, column=3)
+
+        self.replay_button = tk.Button(self.rootWin, text="Replay", font="Menlo 20",command=self.restart)
+        self.replay_button.grid(row=1, column=3)
+
+
+        self.count = 0  # Count of food eaten
+        self.count_label = tk.Label(self.rootWin, text=f"Score: {self.count}", font=("Menlo", 20), fg="black", bg="white")
+        self.count_label.grid(row=1,column=1)
+
+
+
+
         # ---------------------------------------------------------------------
 
         self.canvas = tk.Canvas(self.rootWin, bg = 'black', width=500, height=500, bd=0)
@@ -54,6 +68,7 @@ class SnakeGUI:
         self.count = 0  # Count of food eaten
         self.best = 0  # Best score
         self.speed = 400  # Initial speed
+
         # TODO: Use self.count to keep track of score
 
 
@@ -118,12 +133,18 @@ class SnakeGUI:
             self.canvas.delete("food")
             self.food = self.createFood()
             self.count += 1
+            self.count_label['text']="Score:"+str(self.count)
             self.speed -= 5
             xi, yi = self.snake[-1]
             self.snake.append((xi, yi+20))
             self.drawSnake()
+            return self.count
+
+
 
         self.snake.pop()
+
+
 
 
     def createFood(self):
