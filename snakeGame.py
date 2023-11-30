@@ -36,7 +36,7 @@ class SnakeGUI:
         # Widgets
 
         self.lblTitle = tk.Label(self.rootWin, text="Snake Game", font=('Menlo bold', 20), justify=tk.CENTER)
-        self.lblTitle.grid(row=0, column=0, padx=10, pady=10)
+        self.lblTitle.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
 
         self.quitButton=tk.Button(self.rootWin, text="Quit", font="Menlo 20", command= self.quit)
         self.quitButton.grid(row=2, column=3)
@@ -46,16 +46,18 @@ class SnakeGUI:
 
 
         self.count = 0  # Count of food eaten
-        self.count_label = tk.Label(self.rootWin, text=f"Score: {self.count}", font=("Menlo", 20), fg="black", bg="white")
-        self.count_label.grid(row=1,column=1)
+        self.count_label = tk.Label(self.rootWin, text="Score: 0", font=("Menlo", 20), fg="black", bg="white")
+        self.count_label.grid(row=1,column=1, rowspan=2)
 
-
+        self.best = 0  # Best score
+        self.best_label = tk.Label(self.rootWin, text="Best: 0", font="Menlo 20", fg='white', bg='black')
+        self.best_label.grid(row=1, column=2, rowspan=2)
 
 
         # ---------------------------------------------------------------------
 
         self.canvas = tk.Canvas(self.rootWin, bg = 'black', width=500, height=500, bd=0)
-        self.canvas.grid(row=3, column=0)
+        self.canvas.grid(row=3, column=0, columnspan=4)
         # Show all of the canvas
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
@@ -65,11 +67,7 @@ class SnakeGUI:
         self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
-        self.count = 0  # Count of food eaten
-        self.best = 0  # Best score
         self.speed = 400  # Initial speed
-
-        # TODO: Use self.count to keep track of score
 
 
     # ---------------------------------------------------------------------
@@ -79,6 +77,7 @@ class SnakeGUI:
         x, y = self.snake[0]
         if self.count > self.best:
             self.best = self.count
+            self.best_label['text'] = "Best: " + str(self.best)
         if not self.pause:
             if ((x >= 0 and x <= 480 and y >= 0 and y <= 480) and
                     (self.snake[0] not in self.snake[1:])):
@@ -133,17 +132,13 @@ class SnakeGUI:
             self.canvas.delete("food")
             self.food = self.createFood()
             self.count += 1
-            self.count_label['text']="Score:"+str(self.count)
+            self.count_label['text'] = "Score: " + str(self.count)
             self.speed -= 5
             xi, yi = self.snake[-1]
             self.snake.append((xi, yi+20))
             self.drawSnake()
-            return self.count
-
-
 
         self.snake.pop()
-
 
 
 
@@ -169,6 +164,7 @@ class SnakeGUI:
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
         self.count = 0  # Count of food eaten
+        self.count_label['text'] = "Score: " + str(self.count)
         self.speed = 400  # Initial speed
 
     def quit(self):
