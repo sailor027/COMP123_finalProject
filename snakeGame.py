@@ -16,8 +16,6 @@ Resources Used
 '''
 
 # ---------------------------------------------------------------------
-# TODO: @Ko get snake to move
-# TODO: @Minseo create widgets: quit, replay, score, (highest score)
 
 # ----------
 import tkinter as tk
@@ -75,6 +73,11 @@ class SnakeGUI:
     # Set up snake
 
     def run(self):
+        """If current score is higher than best score, update best score.
+        If game is not paused, while snake head is within the canvas and has not run into itself, continue to move
+        snake and wait self.speed seconds until it runs again so that the game speeds up. If snake runs into itself
+        or the walls of the canvas save current best score and shows message. If the game is paused, show message
+        until further input by user."""
         x, y = self.snake[0]
         if self.count > self.best:
             self.best = self.count
@@ -95,6 +98,8 @@ class SnakeGUI:
 
 
     def drawSnake(self):
+        """Deletes snake body before drawing a new one. For every coordination in the list self.snake, draw a green
+        square and tag it as 'snake'."""
         self.canvas.delete("snakes")
         for x, y in self.snake:
             self.canvas.create_rectangle(x, y, x+20, y+20, fill="light green", tags="snakes")
@@ -103,7 +108,8 @@ class SnakeGUI:
     def keys(self, event):
         """Assigns keys to commands.
         For arrow keys, prevent snake from going to the opposite direction.
-        Esc => quit game"""
+        Esc => quit game
+        Space => pause game"""
         key = event.keysym
         print(key)  # TODO: delete later
         if ((key == "Up" and not self.direction == "Down") or
@@ -115,12 +121,14 @@ class SnakeGUI:
             self.quit()
         elif key == "space":
             self.pause = True
-        if key == "c":
+        if key == "c":  # TODO: Fix
             self.pause = False
 
 
 
     def moveSnake(self):
+        """Get coordination of the 1st snake body and adds 20 to the direction of the key that was pressed. Insert
+        new coordination at [0] of snake list and deletes [-1], so that it looks like the snake is moving."""
         x, y = self.snake[0]  # Get coordination of 1st snake
         if self.direction == "Up":
             y += -20
@@ -148,6 +156,7 @@ class SnakeGUI:
 
 
     def createFood(self):
+        """Gets a random coordinate within the canvas size. Draws a red circle and tag it as 'food'."""
         x = random.randint(1, 24) * 20
         y = random.randint(1, 24) * 20
         self.canvas.create_oval(x, y, x+20, y+20, fill='red', tags="food")
@@ -163,6 +172,7 @@ class SnakeGUI:
             pass  # to avoid errors when the window is closed
 
     def restart(self):
+        """Initialises all settings so that the game can restart."""
         self.canvas.delete(tk.ALL)
         self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
         self.drawSnake()
