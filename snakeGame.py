@@ -49,8 +49,9 @@ class SnakeGUI:
         self.count_label = tk.Label(self.rootWin, text="Score: 0", font=("Menlo", 20), fg="black", bg="white")
         self.count_label.grid(row=1,column=1, rowspan=2)
 
-        self.best = 0  # Best score
-        self.best_label = tk.Label(self.rootWin, text="Best: 0", font="Menlo 20", fg='white', bg='black')
+        self.best = self.getBestScore()  # Best score
+        self.best_label = tk.Label(self.rootWin, font="Menlo 20", fg='white', bg='black')
+        self.best_label['text'] = 'Best: ' + str(self.best)
         self.best_label.grid(row=1, column=2, rowspan=2)
 
 
@@ -85,12 +86,12 @@ class SnakeGUI:
                 self.drawSnake()
                 self.rootWin.after(self.speed, self.run)
             else:
-                self.canvas.create_text(250, 230, text="Game Over", fill='white', justify=tk.CENTER)  # Game Over
-                self.canvas.create_text(250,270, text="[c]ontinue / [r]estart / [q]uit")
-                print(self.count)  # TODO: Delete later
+                self.saveBestScore()
+                self.canvas.create_text(250, 230, text="Game Over \n \n [r]estart / [q]uit",
+                                        font=('Menlo', 15), fill='white', justify=tk.CENTER)
         elif self.pause:
-            self.canvas.create_text(250, 250, text="Game Paused", fill='white', justify=tk.CENTER)
-
+            self.canvas.create_text(250, 250, text="Game Paused \n \n [c]ontinue / [r]estart / [q]uit",
+                                    font=('Menlo', 15), fill='white', justify=tk.CENTER)
 
 
     def drawSnake(self):
@@ -102,8 +103,9 @@ class SnakeGUI:
     def keys(self, event):
         """Assigns keys to commands.
         For arrow keys, prevent snake from going to the opposite direction.
-        Ecs => quit game"""
+        Esc => quit game"""
         key = event.keysym
+        print(key)  # TODO: delete later
         if ((key == "Up" and not self.direction == "Down") or
                 (key == "Down" and not self.direction == "Up") or
                 (key == "Right" and not self.direction == "Left") or
@@ -112,7 +114,10 @@ class SnakeGUI:
         elif key == "Escape":
             self.quit()
         elif key == "space":
-            self.restart()
+            self.pause = True
+        if key == "c":
+            self.pause = False
+
 
 
     def moveSnake(self):
@@ -158,17 +163,39 @@ class SnakeGUI:
             pass  # to avoid errors when the window is closed
 
     def restart(self):
-        self.pause = False
         self.canvas.delete(tk.ALL)
         self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
+        self.drawSnake()
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
         self.count = 0  # Count of food eaten
         self.count_label['text'] = "Score: " + str(self.count)
         self.speed = 400  # Initial speed
+        self.pause = False
 
     def quit(self):
         self.rootWin.destroy()
+
+    def saveBestScore(self):
+        """Saves best score in 'bestScore.txt' file, so that it can be retrieved even when a new game is started"""
+        fileOut = open('bestScore.txt', 'w')
+        fileOut.write(str(self.best))
+        fileOut.close()
+
+    def getBestScore(self):
+        """Retrieves best score from file"""
+        fileIn = open('bestScore.txt', 'r')
+        bestScore = fileIn.read()
+        fileIn.close()
+        if bestScore == '':
+            bestScore = 0
+        else:
+            bestScore = int(bestScore)
+        return bestScore
+
+
+
+
 
 
 
