@@ -138,6 +138,8 @@ class SnakeGUI:
                 self.gameOver = False
                 self.canvas.delete(self.gameOverText)
                 self.restart()
+            if key == "q":
+                self.quit()
 
 
 
