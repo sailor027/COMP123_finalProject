@@ -62,7 +62,7 @@ class SnakeGUI:
 
         self.pause = False
         self.gameOver = False
-        self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
+        self.snake = [(240, 240), (240, 260), (240, 280)]  # Initial list of snake body
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
         self.speed = 400  # Initial speed
@@ -109,9 +109,12 @@ class SnakeGUI:
 
     def keys(self, event):
         """Assigns keys to commands.
-        For arrow keys, prevent snake from going to the opposite direction.
-        Esc => quit game
-        Space => pause game"""
+        Arrow keys: prevent snake from going to the opposite direction.
+        Esc: quit game
+        Space: pause game
+        c: continue
+        r: restart
+        q: quit"""
         key = event.keysym
         if ((key == "Up" and not self.direction == "Down") or
                 (key == "Down" and not self.direction == "Up") or
@@ -131,6 +134,7 @@ class SnakeGUI:
                 self.pause = False
                 self.canvas.delete(self.pauseText)
                 self.restart()
+                self.run()
             if key == "q":
                 self.quit()
         if self.gameOver:
@@ -138,6 +142,7 @@ class SnakeGUI:
                 self.gameOver = False
                 self.canvas.delete(self.gameOverText)
                 self.restart()
+                self.run()
             if key == "q":
                 self.quit()
 
@@ -186,7 +191,7 @@ class SnakeGUI:
     def restart(self):
         """Initialises all settings so that the game can restart."""
         self.canvas.delete(tk.ALL)
-        self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
+        self.snake = [(240, 240), (240, 260), (240, 280)]  # Initial list of snake body
         self.drawSnake()
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
@@ -194,9 +199,10 @@ class SnakeGUI:
         self.count_label['text'] = "Score: " + str(self.count)
         self.speed = 400  # Initial speed
         self.pause = False
-        self.run()
+        self.gameOver = False
+        # self.run()
 
-    def quit(self, event=None):  # TODO: fix, delete comments
+    def quit(self, event=None):
         self.saveBestScore()
         self.rootWin.destroy()
 
