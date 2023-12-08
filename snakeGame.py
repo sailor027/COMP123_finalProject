@@ -36,24 +36,22 @@ class SnakeGUI:
         self.lblTitle = tk.Label(self.rootWin, text="Snake Game", font=('Menlo bold', 20), justify=tk.CENTER)
         self.lblTitle.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
 
-        self.quitButton=tk.Button(self.rootWin, text="Quit", font="Menlo 20", command= self.quit)
+        self.quitButton=tk.Button(self.rootWin, text="Quit", font="Menlo 20", command=self.quit)
         self.quitButton.grid(row=2, column=3)
 
-        self.replay_button = tk.Button(self.rootWin, text="Replay", font="Menlo 20",command=self.restart)
+        self.replay_button = tk.Button(self.rootWin, text="Replay", font="Menlo 20", command=self.restart)
         self.replay_button.grid(row=1, column=3)
 
 
         self.count = 0  # Count of food eaten
         self.count_label = tk.Label(self.rootWin, text="Score: 0", font=("Menlo", 20), fg="black", bg="white")
-        self.count_label.grid(row=1,column=1, rowspan=2)
+        self.count_label.grid(row=1, column=1, rowspan=2)
 
         self.best = self.getBestScore()  # Best score
         self.best_label = tk.Label(self.rootWin, font="Menlo 20", fg='white', bg='black')
         self.best_label['text'] = 'Best: ' + str(self.best)
         self.best_label.grid(row=1, column=2, rowspan=2)
 
-
-        # ---------------------------------------------------------------------
 
         self.canvas = tk.Canvas(self.rootWin, bg = 'black', width=500, height=500, bd=0)
         self.canvas.grid(row=3, column=0, columnspan=4)
@@ -63,10 +61,13 @@ class SnakeGUI:
         self.rootWin.bind("<Key>", self.keys)
 
         self.pause = False
+        self.gameOver = False
         self.snake = [(240, 240), (240, 250), (240, 260)]  # Initial list of snake body
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
         self.speed = 400  # Initial speed
+
+        self.run()
 
 
     # ---------------------------------------------------------------------
@@ -90,10 +91,11 @@ class SnakeGUI:
                 self.rootWin.after(self.speed, self.run)
             else:
                 self.saveBestScore()
-                self.canvas.create_text(250, 230, text="Game Over \n \n [r]estart / [q]uit",
+                self.gameOver = True
+                self.gameOverText = self.canvas.create_text(250, 230, text="Game Over \n \n [r]estart / [q]uit",
                                         font=('Menlo', 15), fill='white', justify=tk.CENTER)
         elif self.pause:
-            self.canvas.create_text(250, 250, text="Game Paused \n \n [c]ontinue / [r]estart / [q]uit",
+            self.pauseText = self.canvas.create_text(250, 250, text="Game Paused \n \n [c]ontinue / [r]estart / [q]uit",
                                     font=('Menlo', 15), fill='white', justify=tk.CENTER)
 
 
@@ -111,7 +113,6 @@ class SnakeGUI:
         Esc => quit game
         Space => pause game"""
         key = event.keysym
-        print(key)  # TODO: delete later
         if ((key == "Up" and not self.direction == "Down") or
                 (key == "Down" and not self.direction == "Up") or
                 (key == "Right" and not self.direction == "Left") or
@@ -121,8 +122,22 @@ class SnakeGUI:
             self.quit()
         elif key == "space":
             self.pause = True
-        if key == "c":  # TODO: Fix
-            self.pause = False
+        if self.pause:
+            if key == "c":
+                self.pause = False
+                self.canvas.delete(self.pauseText)
+                self.run()
+            if key == "r":
+                self.pause = False
+                self.canvas.delete(self.pauseText)
+                self.restart()
+            if key == "q":
+                self.quit()
+        if self.gameOver:
+            if key == "r":
+                self.gameOver = False
+                self.canvas.delete(self.gameOverText)
+                self.restart()
 
 
 
@@ -164,12 +179,7 @@ class SnakeGUI:
 
     # ---------------------------------------------------------------------
     def go(self):
-        try:
-            while True:
-                self.run()
-                self.rootWin.mainloop()
-        except tk.TclError:
-            pass  # to avoid errors when the window is closed
+        self.rootWin.mainloop()
 
     def restart(self):
         """Initialises all settings so that the game can restart."""
@@ -182,8 +192,10 @@ class SnakeGUI:
         self.count_label['text'] = "Score: " + str(self.count)
         self.speed = 400  # Initial speed
         self.pause = False
+        self.run()
 
-    def quit(self):
+    def quit(self, event=None):  # TODO: fix, delete comments
+        self.saveBestScore()
         self.rootWin.destroy()
 
     def saveBestScore(self):
