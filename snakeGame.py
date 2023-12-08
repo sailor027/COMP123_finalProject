@@ -7,7 +7,7 @@ COMP 123-1 Final Project
 # ---------------------------------------------------------------------
 '''
 Resources Used
-- From class
+- From class:
     - hw5
     - GuiExamples/tkinterCanvas2
     - GuiExamples/tkinterCanvas3
