@@ -4,6 +4,8 @@ COMP 123-1 Final Project
 <Minseo Kim, Ko Horiuchi>
 """
 
+'''This '''
+
 # ---------------------------------------------------------------------
 '''
 Resources Used
@@ -12,6 +14,9 @@ Resources Used
     - GuiExamples/tkinterCanvas2
     - GuiExamples/tkinterCanvas3
 - https://docs.python.org/3/tutorial/datastructures.html#
+- https://docs.python.org/3/library/os.html
+    - https://docs.python.org/3/library/os.path.html#module-os.path
+- https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
 - https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/key-names.html
 '''
 
@@ -20,6 +25,7 @@ Resources Used
 # ----------
 import tkinter as tk
 import random
+import os
 
 # =====================================================================
 class SnakeGUI:
@@ -30,13 +36,17 @@ class SnakeGUI:
         self.rootWin = tk.Tk()
         self.rootWin.title("Snake Game")
 
+        if not os.path.exists('bestScore.txt'):
+            with open('bestScore.txt', 'w') as file:
+                file.write('0')
+
         # ---------------------------------------------------------------------
         # Widgets
 
         self.lblTitle = tk.Label(self.rootWin, text="Snake Game", font=('Menlo bold', 20), justify=tk.CENTER)
         self.lblTitle.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
 
-        self.quitButton=tk.Button(self.rootWin, text="Quit", font="Menlo 20", command=self.quit)
+        self.quitButton = tk.Button(self.rootWin, text="Quit", font="Menlo 20", command=self.quit)
         self.quitButton.grid(row=2, column=3)
 
         self.replay_button = tk.Button(self.rootWin, text="Replay", font="Menlo 20", command=self.restart)
@@ -66,6 +76,7 @@ class SnakeGUI:
         self.direction = "Up"  # Initial snake direction
         self.food = self.createFood()
         self.speed = 400  # Initial speed
+
 
         self.run()
 
