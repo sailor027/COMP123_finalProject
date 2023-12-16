@@ -118,6 +118,61 @@ class SnakeGUI:
             self.canvas.create_rectangle(x, y, x+20, y+20, fill="light green", tags="snakes")
 
 
+    def moveSnake(self):
+        """Get coordination of the 1st snake body and adds 20 to the direction of the key that was pressed. Insert
+        new coordination at [0] of snake list and deletes [-1], so that it looks like the snake is moving."""
+        x, y = self.snake[0]  # Get coordination of 1st snake
+        if self.direction == "Up":
+            y += -20
+        elif self.direction == "Down":
+            y += 20
+        elif self.direction == "Right":
+            x += 20
+        elif self.direction == "Left":
+            x += -20
+        self.snake.insert(0, (x, y))
+
+        if self.snake[0] == self.food:
+            """If snake eats food, increase speed by 5ms and make body longer by 1 square"""
+            self.canvas.delete("food")
+            self.food = self.createFood()
+            self.count += 1
+            self.count_label['text'] = "Score: " + str(self.count)
+            self.speed -= 5
+            xi, yi = self.snake[-1]
+            self.snake.append((xi, yi+20))
+            self.drawSnake()
+
+        self.snake.pop()
+
+
+    def createFood(self):
+        """Gets a random coordinate within the canvas size. Draws a red circle and tag it as 'food'."""
+        x = random.randint(1, 24) * 20
+        y = random.randint(1, 24) * 20
+        self.canvas.create_oval(x, y, x+20, y+20, fill='red', tags="food")
+        return x, y
+
+
+    def saveBestScore(self):
+        """Saves best score in 'bestScore.txt' file, so that it can be retrieved even when a new game is started"""
+        fileOut = open('bestScore.txt', 'w')
+        fileOut.write(str(self.best))
+        fileOut.close()
+
+
+    def getBestScore(self):
+        """Retrieves best score from file"""
+        fileIn = open('bestScore.txt', 'r')
+        bestScore = fileIn.read()
+        fileIn.close()
+        if bestScore == '':
+            bestScore = 0
+        else:
+            bestScore = int(bestScore)
+        return bestScore
+
+
     def keys(self, event):
         """Assigns keys to commands.
         Arrow keys: prevent snake from going to the opposite direction.
@@ -158,43 +213,6 @@ class SnakeGUI:
                 self.quit()
 
 
-
-    def moveSnake(self):
-        """Get coordination of the 1st snake body and adds 20 to the direction of the key that was pressed. Insert
-        new coordination at [0] of snake list and deletes [-1], so that it looks like the snake is moving."""
-        x, y = self.snake[0]  # Get coordination of 1st snake
-        if self.direction == "Up":
-            y += -20
-        elif self.direction == "Down":
-            y += 20
-        elif self.direction == "Right":
-            x += 20
-        elif self.direction == "Left":
-            x += -20
-        self.snake.insert(0, (x, y))
-
-        if self.snake[0] == self.food:
-            """If snake eats food, increase speed by 5ms and make body longer by 1 square"""
-            self.canvas.delete("food")
-            self.food = self.createFood()
-            self.count += 1
-            self.count_label['text'] = "Score: " + str(self.count)
-            self.speed -= 5
-            xi, yi = self.snake[-1]
-            self.snake.append((xi, yi+20))
-            self.drawSnake()
-
-        self.snake.pop()
-
-
-
-    def createFood(self):
-        """Gets a random coordinate within the canvas size. Draws a red circle and tag it as 'food'."""
-        x = random.randint(1, 24) * 20
-        y = random.randint(1, 24) * 20
-        self.canvas.create_oval(x, y, x+20, y+20, fill='red', tags="food")
-        return x, y
-
     # ---------------------------------------------------------------------
     def go(self):
         self.rootWin.mainloop()
@@ -211,33 +229,10 @@ class SnakeGUI:
         self.speed = 400  # Initial speed
         self.pause = False
         self.gameOver = False
-        # self.run()
 
     def quit(self, event=None):
         self.saveBestScore()
         self.rootWin.destroy()
-
-    def saveBestScore(self):
-        """Saves best score in 'bestScore.txt' file, so that it can be retrieved even when a new game is started"""
-        fileOut = open('bestScore.txt', 'w')
-        fileOut.write(str(self.best))
-        fileOut.close()
-
-    def getBestScore(self):
-        """Retrieves best score from file"""
-        fileIn = open('bestScore.txt', 'r')
-        bestScore = fileIn.read()
-        fileIn.close()
-        if bestScore == '':
-            bestScore = 0
-        else:
-            bestScore = int(bestScore)
-        return bestScore
-
-
-
-
-
 
 
 # =====================================================================
