@@ -4,9 +4,19 @@ COMP 123-1 Final Project
 <Minseo Kim, Ko Horiuchi>
 """
 
-'''This '''
+'''This program mainly uses tkinter to run a Snake Game. Upon running, it looks for a 'bestScore.txt' file and 
+creates one if not found. This file is necessary to store the best score even when the program is terminated. The 
+snake and food are created by drawing and deleting the canvas. Helper functions define actions such as restart, quit, 
+updating the snake body, saving the highest score, etc. The main function, self.run() regulates the conditions under 
+which the helper functions run.'''
 
-# ---------------------------------------------------------------------
+
+# ----------
+import tkinter as tk
+import random
+import os
+
+# -------------------------------------------------------------
 '''
 Resources Used
 - From class:
@@ -20,18 +30,9 @@ Resources Used
 - https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/key-names.html
 '''
 
-# ---------------------------------------------------------------------
-
-# ----------
-import tkinter as tk
-import random
-import os
-
 # =====================================================================
 class SnakeGUI:
 
-    # ---------------------------------------------------------------------
-    # Set up window
     def __init__(self):
         self.rootWin = tk.Tk()
         self.rootWin.title("Snake Game")
@@ -40,7 +41,7 @@ class SnakeGUI:
             with open('bestScore.txt', 'w') as file:
                 file.write('0')
 
-        # ---------------------------------------------------------------------
+        # -------------------------------------------------------------
         # Widgets
 
         self.lblTitle = tk.Label(self.rootWin, text="Snake Game", font=('Menlo bold', 20), justify=tk.CENTER)
@@ -65,8 +66,11 @@ class SnakeGUI:
 
         self.canvas = tk.Canvas(self.rootWin, bg = 'black', width=500, height=500, bd=0)
         self.canvas.grid(row=3, column=0, columnspan=4)
-        # Show all of the canvas
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
+
+
+        # -------------------------------------------------------------
+        # Initialisation
 
         self.rootWin.bind("<Key>", self.keys)
 
@@ -77,13 +81,10 @@ class SnakeGUI:
         self.food = self.createFood()
         self.speed = 400  # Initial speed
 
-
         self.run()
 
 
-    # ---------------------------------------------------------------------
-    # Set up snake
-
+    # -------------------------------------------------------------
     def run(self):
         """If current score is higher than best score, update best score.
         If game is not paused, while snake head is within the canvas and has not run into itself, continue to move
@@ -110,6 +111,30 @@ class SnakeGUI:
                                     font=('Menlo', 15), fill='white', justify=tk.CENTER)
 
 
+    def go(self):
+        self.rootWin.mainloop()
+
+
+    def restart(self):
+        """Initialises all settings so that the game can restart."""
+        self.canvas.delete(tk.ALL)
+        self.snake = [(240, 240), (240, 260), (240, 280)]  # Initial list of snake body
+        self.drawSnake()
+        self.direction = "Up"  # Initial snake direction
+        self.food = self.createFood()
+        self.count = 0  # Count of food eaten
+        self.count_label['text'] = "Score: " + str(self.count)
+        self.speed = 400  # Initial speed
+        self.pause = False
+        self.gameOver = False
+
+    def quit(self, event=None):
+        self.saveBestScore()
+        self.rootWin.destroy()
+
+
+    # -------------------------------------------------------------
+    # Snake Manipulation
     def drawSnake(self):
         """Deletes snake body before drawing a new one. For every coordination in the list self.snake, draw a green
         square and tag it as 'snake'."""
@@ -146,6 +171,8 @@ class SnakeGUI:
         self.snake.pop()
 
 
+    # -------------------------------------------------------------
+    # Food Manipulation
     def createFood(self):
         """Gets a random coordinate within the canvas size. Draws a red circle and tag it as 'food'."""
         x = random.randint(1, 24) * 20
@@ -154,6 +181,8 @@ class SnakeGUI:
         return x, y
 
 
+    # -------------------------------------------------------------
+    # Scores
     def saveBestScore(self):
         """Saves best score in 'bestScore.txt' file, so that it can be retrieved even when a new game is started"""
         fileOut = open('bestScore.txt', 'w')
@@ -172,15 +201,17 @@ class SnakeGUI:
             bestScore = int(bestScore)
         return bestScore
 
-
+    # -------------------------------------------------------------
+    # Key Assignment
     def keys(self, event):
         """Assigns keys to commands.
         Arrow keys: prevent snake from going to the opposite direction.
         Esc: quit game
         Space: pause game
-        c: continue
-        r: restart
-        q: quit"""
+        The keys below only work when the game is paused:
+            c: continue
+            r: restart
+            q: quit"""
         key = event.keysym
         if ((key == "Up" and not self.direction == "Down") or
                 (key == "Down" and not self.direction == "Up") or
@@ -211,28 +242,6 @@ class SnakeGUI:
                 self.run()
             if key == "q":
                 self.quit()
-
-
-    # ---------------------------------------------------------------------
-    def go(self):
-        self.rootWin.mainloop()
-
-    def restart(self):
-        """Initialises all settings so that the game can restart."""
-        self.canvas.delete(tk.ALL)
-        self.snake = [(240, 240), (240, 260), (240, 280)]  # Initial list of snake body
-        self.drawSnake()
-        self.direction = "Up"  # Initial snake direction
-        self.food = self.createFood()
-        self.count = 0  # Count of food eaten
-        self.count_label['text'] = "Score: " + str(self.count)
-        self.speed = 400  # Initial speed
-        self.pause = False
-        self.gameOver = False
-
-    def quit(self, event=None):
-        self.saveBestScore()
-        self.rootWin.destroy()
 
 
 # =====================================================================
