@@ -104,10 +104,10 @@ class SnakeGUI:
             else:
                 self.saveBestScore()
                 self.gameOver = True
-                self.gameOverText = self.canvas.create_text(250, 230, text="Game Over \n \n [r]estart / [q]uit",
+                self.gameOverText = self.canvas.create_text(250, 230, text="Game Over\n\n[r]estart / [q]uit",
                                         font=('Menlo', 15), fill='white', justify=tk.CENTER)
         elif self.pause:
-            self.pauseText = self.canvas.create_text(250, 250, text="Game Paused \n \n [c]ontinue / [r]estart / [q]uit",
+            self.pauseText = self.canvas.create_text(250, 250, text="Game Paused\n\n[c]ontinue / [r]estart / [q]uit",
                                     font=('Menlo', 15), fill='white', justify=tk.CENTER)
 
 
